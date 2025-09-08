@@ -21,4 +21,4 @@ jobs:
           F5_PASSWORD: ${{ secrets.F5_PASSWORD }}
         run: |
           ansible-playbook vip.yml
-          $(ls *.yml | grep -v '^vip.yml$')
+          ansible-playbook $(ls *.yml | grep -v '^vip.yml$')
