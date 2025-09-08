@@ -1,0 +1,48 @@
+---
+- name: Create VIPs
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    virtualserver:
+      - name: "Wls_ODT"
+        keys:
+          - { name_pool: "Application_ODT_pool", ip: "172.16.51.70", description: "production", name_profile: "f5-tcp-lan" }
+
+
+    provider:
+      server: "{{ lookup('env', 'F5_HOST') }}"
+      user: "{{ lookup('env', 'F5_USER') }}"
+      password: "{{ lookup('env', 'F5_PASSWORD') }}"
+      validate_certs: no
+
+  tasks:
+    - name: Add virtual server
+      bigip_virtual_server:
+        source: 0.0.0.0/0
+        state: present
+        partition: Common
+        name: "{{ item.0.name }}"
+        destination: "{{ item.1.ip }}"
+        rate_limit_dst_mask: 27
+        port: 443
+        pool: "{{ item.1.name_pool }}"
+        snat: Automap
+        description: "{{ item.1.description }}"
+        default_persistence_profile: /Common/cookie
+        profiles:
+          - "{{ item.1.name_profile }}"
+          - http
+          - name: /Common/clientssl
+            context: client-side
+          - name: /Common/serverssl
+            context: server-side
+          - name: /Common/httpcompression
+          - name: /Common/oneconnect
+          - name: /Common/webacceleration
+        provider: "{{ provider }}"
+          
+      with_subelements:
+        - "{{ virtualserver }}"
+        - keys
+
