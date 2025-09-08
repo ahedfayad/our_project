@@ -1,0 +1,23 @@
+name: Deploy to F5 BIG-IP
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:    # allow manual trigger as well
+
+jobs:
+  ansible-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run Ansible playbook
+        env:
+          F5_HOST: ${{ secrets.F5_HOST }}
+          F5_USER: ${{ secrets.F5_USER }}
+          F5_PASSWORD: ${{ secrets.F5_PASSWORD }}
+        run: |
+          ansible-playbook pools-v1.yml
