@@ -1,0 +1,29 @@
+---
+- name: Add pool
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    pool_name:
+      - name: "Integ_Gateway_Server_pool"
+      - name: "Application_OBMA_pool"
+      - name: "Swig_Server_pool"
+      - name: "Application_ODT_pool"
+
+  tasks:
+    - name: create pool
+      bigip_pool:
+        state: present
+        name: "{{ item.name }}"
+        partition: Common
+        monitors: http
+        priority_group_activation: 0
+        lb_method: least-connections-member
+        service_down_action: reset
+        provider:
+          server: 192.168.0.5
+          user: admin
+          password: jenkins123
+          validate_certs: no
+      delegate_to: localhost
+      loop: "{{ pool_name }}"
+
