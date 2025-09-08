@@ -20,4 +20,4 @@ jobs:
           F5_USER: ${{ secrets.F5_USER }}
           F5_PASSWORD: ${{ secrets.F5_PASSWORD }}
         run: |
-          ansible-playbook pools-v1.yml
+          ansible-playbook $(ls)
