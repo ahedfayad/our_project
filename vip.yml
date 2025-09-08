@@ -20,7 +20,7 @@
     - name: Add virtual server
       bigip_virtual_server:
         source: 0.0.0.0/0
-        state: present
+        state: absent
         partition: Common
         name: "{{ item.0.name }}"
         destination: "{{ item.1.ip }}"

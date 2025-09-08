@@ -12,7 +12,7 @@
   tasks:
     - name: create pool
       bigip_pool:
-        state: present
+        state: absent
         name: "{{ item.name }}"
         partition: Common
         monitors: http
